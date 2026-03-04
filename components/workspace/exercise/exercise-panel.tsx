@@ -9,7 +9,7 @@ import { GradeResultCard } from "@/components/workspace/exercise/grade-result";
 import { useCourseStore } from "@/lib/stores/course-store";
 import { useExercise } from "@/lib/hooks/use-exercise";
 import type { Exercise, Chapter, GradeResult } from "@/types/course";
-import { ArrowRight, ChevronRight } from "lucide-react";
+import { ArrowRight, ArrowLeft, ChevronRight } from "lucide-react";
 
 interface ExercisePanelProps {
   exercise: Exercise;
@@ -87,6 +87,22 @@ export function ExercisePanel({
               Exercise {exerciseOrder} / {totalExercises}
             </Badge>
           </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-xs gap-1.5 h-7 text-muted-foreground hover:text-foreground"
+            onClick={() =>
+              setActiveView({
+                type: "chapter",
+                courseId,
+                chapterId: chapter.id,
+                chapterOrder: chapter.order,
+              })
+            }
+          >
+            <ArrowLeft className="size-3" />
+            Back to chapter
+          </Button>
         </div>
         <Progress value={progress} className="h-1" />
       </div>

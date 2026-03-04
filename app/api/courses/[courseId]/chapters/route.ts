@@ -103,7 +103,8 @@ export async function POST(
           delimIdx + CHAPTER_EXERCISES_DELIMITER.length
         ).trim();
         try {
-          exercises = ExercisesArraySchema.parse(JSON.parse(exercisesRaw));
+          const cleanedExercises = exercisesRaw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```\s*$/i, "").trim();
+          exercises = ExercisesArraySchema.parse(JSON.parse(cleanedExercises));
         } catch {
           // Exercises parse failed — save content without exercises
         }

@@ -1,9 +1,10 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { getAIService } from "@/lib/ai";
 import { outlinePrompt } from "@/lib/ai/prompts";
 import { OutlineResponseSchema } from "@/lib/ai/schemas";
 import { createCourse, getCoursesByUser } from "@/lib/db/queries/courses";
+import { prisma } from "@/lib/db/client";
 
 export async function GET() {
   const { userId } = await auth();
@@ -16,6 +17,20 @@ export async function GET() {
 export async function POST(req: Request) {
   const { userId } = await auth();
   if (!userId) return new NextResponse("Unauthorized", { status: 401 });
+
+  // Ensure user record exists (webhook may not be configured in local dev)
+  const clerkUser = await currentUser();
+  if (clerkUser) {
+    await prisma.user.upsert({
+      where: { id: userId },
+      update: {},
+      create: {
+        id: userId,
+        email: clerkUser.emailAddresses[0]?.emailAddress ?? "",
+        name: `${clerkUser.firstName ?? ""} ${clerkUser.lastName ?? ""}`.trim() || null,
+      },
+    });
+  }
 
   const { topic } = await req.json();
   if (!topic || typeof topic !== "string") {
@@ -33,8 +48,11 @@ export async function POST(req: Request) {
 
   let parsed;
   try {
-    parsed = OutlineResponseSchema.parse(JSON.parse(raw));
+    // Strip markdown code fences if the model wraps the JSON
+    const cleaned = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```\s*$/i, "").trim();
+    parsed = OutlineResponseSchema.parse(JSON.parse(cleaned));
   } catch {
+    console.error("Invalid AI response:", raw);
     return new NextResponse("Invalid AI response", { status: 500 });
   }
 

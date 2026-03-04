@@ -2,7 +2,6 @@
 
 import { use, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { QueryProvider } from "@/components/layout/query-provider";
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -50,11 +49,11 @@ function CoursePageInner({ courseId }: { courseId: string }) {
       orientation="horizontal"
       className="h-full"
     >
-      <ResizablePanel defaultSize={35} minSize={25} maxSize={50}>
+      <ResizablePanel defaultSize="35%" minSize="25%" maxSize="50%">
         <ChatPanel />
       </ResizablePanel>
       <ResizableHandle withHandle />
-      <ResizablePanel defaultSize={65} minSize={40}>
+      <ResizablePanel defaultSize="65%" minSize="40%">
         <WorkspacePanel initialCourseId={courseId} />
       </ResizablePanel>
     </ResizablePanelGroup>
@@ -67,10 +66,5 @@ export default function CourseIdPage({
   params: Promise<{ courseId: string }>;
 }) {
   const { courseId } = use(params);
-
-  return (
-    <QueryProvider>
-      <CoursePageInner courseId={courseId} />
-    </QueryProvider>
-  );
+  return <CoursePageInner courseId={courseId} />;
 }
