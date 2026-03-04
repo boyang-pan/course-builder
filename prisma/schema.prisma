@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id // Clerk user ID
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  courses   Course[]
+
+  @@map("users")
+}
+
+model Course {
+  id          String       @id @default(cuid())
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String       @db.Text
+  topic       String
+  outline     Json
+  status      CourseStatus @default(DRAFT)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  chapters    Chapter[]
+
+  @@index([userId])
+  @@map("courses")
+}
+
+enum CourseStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+}
+
+model Chapter {
+  id          String        @id @default(cuid())
+  courseId    String
+  course      Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  order       Int
+  title       String
+  summary     String        @db.Text
+  content     String?       @db.Text
+  status      ChapterStatus @default(LOCKED)
+  generatedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  exercises   Exercise[]
+
+  @@unique([courseId, order])
+  @@map("chapters")
+}
+
+enum ChapterStatus {
+  LOCKED
+  GENERATING
+  AVAILABLE
+  IN_PROGRESS
+  COMPLETED
+}
+
+model Exercise {
+  id          String       @id @default(cuid())
+  chapterId   String
+  chapter     Chapter      @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  order       Int
+  question    String       @db.Text
+  rubric      String       @db.Text
+  passed      Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  submissions Submission[]
+
+  @@unique([chapterId, order])
+  @@map("exercises")
+}
+
+model Submission {
+  id            String          @id @default(cuid())
+  exerciseId    String
+  exercise      Exercise        @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  userId        String
+  answer        String          @db.Text
+  grade         SubmissionGrade
+  feedback      String          @db.Text
+  attemptNumber Int
+  createdAt     DateTime        @default(now())
+
+  @@index([exerciseId])
+  @@map("submissions")
+}
+
+enum SubmissionGrade {
+  PASS
+  FAIL
+}
