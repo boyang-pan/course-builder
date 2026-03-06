@@ -1,5 +1,18 @@
 import { z } from "zod";
 
+export const CourseQuestionOptionSchema = z.object({
+  label: z.string().min(1),
+  value: z.string().min(1),
+});
+
+export const CourseQuestionSchema = z.object({
+  id: z.string().min(1),
+  text: z.string().min(1),
+  options: z.array(CourseQuestionOptionSchema).min(2).max(4),
+});
+
+export const CourseQuestionsSchema = z.array(CourseQuestionSchema).length(3);
+
 export const ChapterOutlineItemSchema = z.object({
   order: z.number().int().positive(),
   title: z.string().min(1),

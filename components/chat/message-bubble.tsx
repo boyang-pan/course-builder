@@ -4,13 +4,26 @@ import { cn } from "@/lib/utils";
 import type { Message } from "@/types/chat";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { QuestionCard } from "@/components/chat/question-card";
 
 interface MessageBubbleProps {
   message: Message;
+  onQuestionSubmit?: (answers: Record<string, string> | null) => void;
 }
 
-export function MessageBubble({ message }: MessageBubbleProps) {
+export function MessageBubble({ message, onQuestionSubmit }: MessageBubbleProps) {
   const isUser = message.role === "user";
+
+  if (message.type === "questions" && message.questions) {
+    return (
+      <div className="flex justify-start">
+        <QuestionCard
+          questions={message.questions}
+          onSubmit={onQuestionSubmit ?? (() => {})}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className={cn("flex", isUser ? "justify-end" : "justify-start")}>

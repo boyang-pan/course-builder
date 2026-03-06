@@ -6,6 +6,7 @@ import { GradeResponseSchema } from "@/lib/ai/schemas";
 import {
   createSubmission,
   getExerciseWithRubric,
+  getPreviousSubmissions,
 } from "@/lib/db/queries/submissions";
 
 export async function POST(
@@ -33,8 +34,10 @@ export async function POST(
   const exercise = await getExerciseWithRubric(exerciseId);
   if (!exercise) return new NextResponse("Exercise not found", { status: 404 });
 
+  const previousAttempts = await getPreviousSubmissions(exerciseId, userId);
+
   const ai = getAIService();
-  const { system, user } = gradePrompt(exercise.question, exercise.rubric, answer);
+  const { system, user } = gradePrompt(exercise.question, exercise.rubric, answer, previousAttempts);
 
   const raw = await ai.generateText({
     prompt: user,

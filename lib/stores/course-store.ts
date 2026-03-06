@@ -13,6 +13,7 @@ interface CourseStore {
   messages: Message[];
   isAITyping: boolean;
   addMessage: (message: Message) => void;
+  updateMessage: (id: string, patch: Partial<Message>) => void;
   updateLastMessage: (content: string) => void;
   setIsAITyping: (typing: boolean) => void;
   clearMessages: () => void;
@@ -42,6 +43,10 @@ export const useCourseStore = create<CourseStore>((set) => ({
   isAITyping: false,
   addMessage: (message) =>
     set((state) => ({ messages: [...state.messages, message] })),
+  updateMessage: (id, patch) =>
+    set((state) => ({
+      messages: state.messages.map((m) => (m.id === id ? { ...m, ...patch } : m)),
+    })),
   updateLastMessage: (content) =>
     set((state) => {
       const messages = [...state.messages];

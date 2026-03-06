@@ -35,6 +35,7 @@ export async function getCourseById(courseId: string, userId: string) {
                   id: true,
                   grade: true,
                   feedback: true,
+                  answer: true,
                   attemptNumber: true,
                   createdAt: true,
                 },

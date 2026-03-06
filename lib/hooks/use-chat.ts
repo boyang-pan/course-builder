@@ -29,13 +29,14 @@ export function useChat() {
   );
 
   const addAssistantMessage = useCallback(
-    (content: string, isStreaming = false): Message => {
+    (content: string, isStreaming = false, extra?: Partial<Omit<Message, "id" | "role" | "content" | "createdAt" | "isStreaming">>): Message => {
       const message: Message = {
         id: generateId(),
         role: "assistant",
         content,
         createdAt: new Date(),
         isStreaming,
+        ...extra,
       };
       addMessage(message);
       return message;

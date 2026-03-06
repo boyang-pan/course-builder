@@ -55,15 +55,14 @@ export function useCourseBuilder() {
   );
 
   const startNewCourse = useCallback(
-    async (topic: string) => {
-      sendUserMessage(topic);
+    async (topic: string, learnerContext?: Record<string, string>) => {
       setIsAITyping(true);
 
       try {
         const res = await fetch("/api/courses", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ topic }),
+          body: JSON.stringify({ topic, learnerContext: learnerContext ?? null }),
         });
 
         if (!res.ok) throw new Error("Failed to create course");
@@ -87,7 +86,6 @@ export function useCourseBuilder() {
       }
     },
     [
-      sendUserMessage,
       addAssistantMessage,
       setIsAITyping,
       setActiveCourseId,

@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import type { ChapterOutlineItem } from "@/types/course";
 import type { ChapterStatus } from "@/types/course";
-import { Lock, CheckCircle2, Circle, Loader2, BookOpen } from "lucide-react";
+import { Lock, CheckCircle2, Circle, Loader2, Sparkles } from "lucide-react";
 
 interface ChapterItemProps {
   item: ChapterOutlineItem;
@@ -27,7 +27,7 @@ const statusConfig: Record<
     dotClass: "bg-muted-foreground",
   },
   AVAILABLE: {
-    icon: BookOpen,
+    icon: Sparkles,
     className: "text-foreground cursor-pointer hover:bg-accent",
     dotClass: "bg-blue-500",
   },
@@ -78,10 +78,12 @@ export function ChapterItem({
         <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
           {item.summary}
         </p>
+
       </div>
       <Icon
         className={cn(
           "size-4 shrink-0 mt-0.5",
+          status === "AVAILABLE" && "text-blue-500",
           status === "GENERATING" && "animate-spin"
         )}
       />

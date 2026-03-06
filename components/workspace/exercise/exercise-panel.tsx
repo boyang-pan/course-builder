@@ -9,7 +9,7 @@ import { GradeResultCard } from "@/components/workspace/exercise/grade-result";
 import { useCourseStore } from "@/lib/stores/course-store";
 import { useExercise } from "@/lib/hooks/use-exercise";
 import type { Exercise, Chapter, GradeResult } from "@/types/course";
-import { ArrowRight, ArrowLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ArrowLeft, ChevronRight, ChevronLeft } from "lucide-react";
 
 interface ExercisePanelProps {
   exercise: Exercise;
@@ -35,7 +35,13 @@ export function ExercisePanel({
   const progress = ((exerciseOrder - 1) / totalExercises) * 100;
 
   const isPassed = localGradeResult?.grade === "PASS";
+  const isReviewMode = exercise.passed && !localGradeResult;
   const isLastExercise = exerciseOrder === totalExercises;
+
+  const prevExercise = chapter.exercises?.find((e) => e.order === exerciseOrder - 1) ?? null;
+  const nextExercise = chapter.exercises?.find((e) => e.order === exerciseOrder + 1) ?? null;
+  const canGoNext = (isPassed || isReviewMode) && !isLastExercise;
+  const canGoNextChapter = (isPassed || isReviewMode) && isLastExercise && !!onNextChapter;
 
   const allPassed =
     isPassed &&
@@ -56,11 +62,21 @@ export function ExercisePanel({
     if (result) setLocalGradeResult(result);
   };
 
-  const handleNextExercise = () => {
-    const nextExercise = chapter.exercises
-      ?.sort((a, b) => a.order - b.order)
-      .find((e) => e.order === exerciseOrder + 1);
+  const handlePrevExercise = () => {
+    if (prevExercise) {
+      setLocalGradeResult(null);
+      setAnswer("");
+      setActiveView({
+        type: "exercise",
+        courseId,
+        chapterId: chapter.id,
+        exerciseId: prevExercise.id,
+        exerciseOrder: exerciseOrder - 1,
+      });
+    }
+  };
 
+  const handleNextExercise = () => {
     if (nextExercise) {
       setLocalGradeResult(null);
       setAnswer("");
@@ -79,6 +95,22 @@ export function ExercisePanel({
       <div className="px-6 py-4 border-b border-border space-y-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs gap-1.5 h-7 text-muted-foreground hover:text-foreground"
+              onClick={() =>
+                setActiveView({
+                  type: "chapter",
+                  courseId,
+                  chapterId: chapter.id,
+                  chapterOrder: chapter.order,
+                })
+              }
+            >
+              <ArrowLeft className="size-3" />
+              Back to chapter
+            </Button>
             <Badge variant="secondary" className="text-xs">
               Chapter {chapter.order}
             </Badge>
@@ -87,22 +119,44 @@ export function ExercisePanel({
               Exercise {exerciseOrder} / {totalExercises}
             </Badge>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-xs gap-1.5 h-7 text-muted-foreground hover:text-foreground"
-            onClick={() =>
-              setActiveView({
-                type: "chapter",
-                courseId,
-                chapterId: chapter.id,
-                chapterOrder: chapter.order,
-              })
-            }
-          >
-            <ArrowLeft className="size-3" />
-            Back to chapter
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              disabled={!prevExercise}
+              onClick={handlePrevExercise}
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+            {isLastExercise ? (
+              canGoNextChapter ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs gap-1 h-7"
+                  onClick={onNextChapter}
+                >
+                  Next Chapter
+                  <ArrowRight className="size-3" />
+                </Button>
+              ) : (
+                <Button variant="ghost" size="icon" className="h-7 w-7" disabled>
+                  <ChevronRight className="size-4" />
+                </Button>
+              )
+            ) : (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                disabled={!canGoNext}
+                onClick={handleNextExercise}
+              >
+                <ChevronRight className="size-4" />
+              </Button>
+            )}
+          </div>
         </div>
         <Progress value={progress} className="h-1" />
       </div>
@@ -115,7 +169,23 @@ export function ExercisePanel({
           <p className="text-sm font-medium leading-relaxed">{exercise.question}</p>
         </div>
 
-        {!isPassed ? (
+        {isReviewMode ? (
+          <>
+            <div className="rounded-lg border border-border bg-muted/50 px-4 py-3">
+              <p className="text-xs text-muted-foreground mb-1">Your answer</p>
+              <p className="text-sm">{exercise.submissions?.[0]?.answer}</p>
+            </div>
+            {exercise.submissions?.[0] && (
+              <GradeResultCard
+                result={{
+                  grade: exercise.submissions[0].grade as GradeResult["grade"],
+                  feedback: exercise.submissions[0].feedback,
+                  attemptNumber: exercise.submissions[0].attemptNumber,
+                }}
+              />
+            )}
+          </>
+        ) : !isPassed ? (
           <AnswerInput
             value={answer}
             onChange={setAnswer}
@@ -129,30 +199,8 @@ export function ExercisePanel({
           </div>
         )}
 
-        {localGradeResult && (
+        {!isReviewMode && localGradeResult && (
           <GradeResultCard result={localGradeResult} />
-        )}
-
-        {isPassed && !isLastExercise && (
-          <Button
-            onClick={handleNextExercise}
-            className="gap-2 w-full"
-            size="sm"
-          >
-            Next Exercise
-            <ArrowRight className="size-3.5" />
-          </Button>
-        )}
-
-        {isPassed && isLastExercise && onNextChapter && (
-          <Button
-            onClick={onNextChapter}
-            className="gap-2 w-full"
-            size="sm"
-          >
-            Next Chapter
-            <ArrowRight className="size-3.5" />
-          </Button>
         )}
 
         {!isPassed && localGradeResult && (

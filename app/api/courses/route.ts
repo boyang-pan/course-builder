@@ -32,13 +32,13 @@ export async function POST(req: Request) {
     });
   }
 
-  const { topic } = await req.json();
+  const { topic, learnerContext } = await req.json();
   if (!topic || typeof topic !== "string") {
     return new NextResponse("Missing topic", { status: 400 });
   }
 
   const ai = getAIService();
-  const { system, user } = outlinePrompt(topic);
+  const { system, user } = outlinePrompt(topic, learnerContext ?? null);
 
   const raw = await ai.generateText({
     prompt: user,

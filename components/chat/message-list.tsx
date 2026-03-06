@@ -8,9 +8,10 @@ import type { Message } from "@/types/chat";
 interface MessageListProps {
   messages: Message[];
   isAITyping: boolean;
+  onQuestionSubmit?: (answers: Record<string, string> | null) => void;
 }
 
-export function MessageList({ messages, isAITyping }: MessageListProps) {
+export function MessageList({ messages, isAITyping, onQuestionSubmit }: MessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [userScrolled, setUserScrolled] = useState(false);
@@ -51,7 +52,7 @@ export function MessageList({ messages, isAITyping }: MessageListProps) {
       className="flex-1 overflow-y-auto px-4 py-4 space-y-3"
     >
       {messages.map((msg) => (
-        <MessageBubble key={msg.id} message={msg} />
+        <MessageBubble key={msg.id} message={msg} onQuestionSubmit={onQuestionSubmit} />
       ))}
       {isAITyping && (
         <div className="flex justify-start">

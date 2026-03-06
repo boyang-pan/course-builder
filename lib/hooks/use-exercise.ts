@@ -68,13 +68,13 @@ export function useExercise(courseId: string) {
   );
 
   const startExercises = useCallback(
-    (chapterId: string, firstExerciseId: string, chapterOrder: number) => {
+    (chapterId: string, firstExerciseId: string, chapterOrder: number, exerciseOrder = 1) => {
       setActiveView({
         type: "exercise",
         courseId,
         chapterId,
         exerciseId: firstExerciseId,
-        exerciseOrder: 1,
+        exerciseOrder,
       });
       addAssistantMessage(
         `Let's test your understanding of Chapter ${chapterOrder}. Answer each question thoughtfully — you can retry as many times as needed!`

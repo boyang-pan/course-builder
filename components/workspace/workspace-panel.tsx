@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { useCourseStore } from "@/lib/stores/course-store";
@@ -37,13 +38,15 @@ interface WorkspacePanelProps {
 }
 
 export function WorkspacePanel({ initialCourseId }: WorkspacePanelProps) {
-  const { activeView, setActiveView, activeCourseId, setActiveCourseId } =
+  const { activeView, setActiveView, activeCourseId, setActiveCourseId, isAITyping } =
     useCourseStore();
 
   // Set initial course if provided
-  if (initialCourseId && !activeCourseId) {
-    setActiveCourseId(initialCourseId);
-  }
+  useEffect(() => {
+    if (initialCourseId && !activeCourseId) {
+      setActiveCourseId(initialCourseId);
+    }
+  }, [initialCourseId, activeCourseId, setActiveCourseId]);
 
   const courseId =
     activeCourseId ??
@@ -63,7 +66,10 @@ export function WorkspacePanel({ initialCourseId }: WorkspacePanelProps) {
   const { isGenerating } = useChapter(courseId ?? "");
 
   const renderContent = () => {
-    if (activeView.type === "idle") return <IdleView />;
+    if (activeView.type === "idle") {
+      if (isAITyping) return <OutlineSkeleton />;
+      return <IdleView />;
+    }
 
     if (!course) {
       if (isLoading) return <OutlineSkeleton />;

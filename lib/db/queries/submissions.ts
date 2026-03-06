@@ -35,6 +35,14 @@ export async function createSubmission(data: {
   return submission;
 }
 
+export async function getPreviousSubmissions(exerciseId: string, userId: string) {
+  return prisma.submission.findMany({
+    where: { exerciseId, userId },
+    select: { attemptNumber: true, answer: true, grade: true },
+    orderBy: { attemptNumber: "asc" },
+  });
+}
+
 export async function getExerciseWithRubric(exerciseId: string) {
   return prisma.exercise.findUnique({
     where: { id: exerciseId },
