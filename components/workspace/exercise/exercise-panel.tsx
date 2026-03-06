@@ -180,7 +180,6 @@ export function ExercisePanel({
                 result={{
                   grade: exercise.submissions[0].grade as GradeResult["grade"],
                   feedback: exercise.submissions[0].feedback,
-                  attemptNumber: exercise.submissions[0].attemptNumber,
                 }}
               />
             )}
