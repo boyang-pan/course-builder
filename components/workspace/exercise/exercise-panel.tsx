@@ -136,7 +136,7 @@ export function ExercisePanel({
         {isPassed && !isLastExercise && (
           <Button
             onClick={handleNextExercise}
-            className="bg-violet-600 hover:bg-violet-700 text-white gap-2 w-full"
+            className="gap-2 w-full"
             size="sm"
           >
             Next Exercise
@@ -147,7 +147,7 @@ export function ExercisePanel({
         {isPassed && isLastExercise && onNextChapter && (
           <Button
             onClick={onNextChapter}
-            className="bg-violet-600 hover:bg-violet-700 text-white gap-2 w-full"
+            className="gap-2 w-full"
             size="sm"
           >
             Next Chapter

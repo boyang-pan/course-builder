@@ -154,7 +154,7 @@
 .prose-course pre code { @apply bg-transparent p-0; }
 .prose-course blockquote { @apply border-l-4 border-border pl-4 italic text-muted-foreground mb-3; }
 .prose-course strong { @apply font-semibold; }
-.prose-course a { @apply text-violet-500 underline; }
+.prose-course a { @apply text-foreground underline; }
 .prose-course table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; font-size: 0.875rem; }
 .prose-course thead tr { background-color: var(--muted); }
 .prose-course th { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; font-weight: 600; }

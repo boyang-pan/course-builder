@@ -21,8 +21,8 @@ const fadeIn = {
 function IdleView() {
   return (
     <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
-      <div className="size-16 rounded-2xl bg-violet-600/10 flex items-center justify-center mb-6">
-        <BookOpen className="size-8 text-violet-500" />
+      <div className="size-16 rounded-2xl bg-muted flex items-center justify-center mb-6">
+        <BookOpen className="size-8 text-muted-foreground" />
       </div>
       <h3 className="text-lg font-semibold mb-2">Your workspace</h3>
       <p className="text-sm text-muted-foreground max-w-xs">

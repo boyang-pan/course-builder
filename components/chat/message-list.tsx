@@ -31,7 +31,7 @@ export function MessageList({ messages, isAITyping }: MessageListProps) {
   if (messages.length === 0) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
-        <div className="size-12 rounded-2xl bg-violet-600/10 flex items-center justify-center mb-4">
+        <div className="size-12 rounded-2xl bg-muted flex items-center justify-center mb-4">
           <span className="text-2xl">✦</span>
         </div>
         <p className="text-sm font-medium text-foreground mb-1">

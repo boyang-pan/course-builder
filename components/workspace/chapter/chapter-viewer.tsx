@@ -45,7 +45,7 @@ export function ChapterViewer({
         {chapter.exercises && chapter.exercises.length > 0 && !isGenerating && (
           <Button
             size="sm"
-            className="bg-violet-600 hover:bg-violet-700 text-white gap-1.5"
+            className="gap-1.5"
             onClick={() => {
               const firstExercise = chapter.exercises!.sort((a, b) => a.order - b.order)[0];
               startExercises(chapter.id, firstExercise.id, chapterOrder);

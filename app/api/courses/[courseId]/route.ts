@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { getCourseById, updateCourseStatus } from "@/lib/db/queries/courses";
+import { getCourseById, updateCourseStatus, deleteCourse } from "@/lib/db/queries/courses";
 
 export async function GET(
   _req: Request,
@@ -29,4 +29,16 @@ export async function PATCH(
 
   const course = await updateCourseStatus(courseId, userId, status);
   return NextResponse.json(course);
+}
+
+export async function DELETE(
+  _req: Request,
+  { params }: { params: Promise<{ courseId: string }> }
+) {
+  const { userId } = await auth();
+  if (!userId) return new NextResponse("Unauthorized", { status: 401 });
+
+  const { courseId } = await params;
+  await deleteCourse(courseId, userId);
+  return new NextResponse(null, { status: 204 });
 }

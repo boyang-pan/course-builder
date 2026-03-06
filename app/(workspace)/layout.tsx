@@ -21,8 +21,8 @@ export default function WorkspaceLayout({
               </Link>
             </Button>
             <Link href="/dashboard" className="flex items-center gap-2">
-              <div className="size-6 rounded-md bg-violet-600 flex items-center justify-center">
-                <GraduationCap className="size-3.5 text-white" />
+              <div className="size-6 rounded-md bg-foreground flex items-center justify-center">
+                <GraduationCap className="size-3.5 text-background" />
               </div>
               <span className="text-sm font-semibold">Course Builder</span>
             </Link>

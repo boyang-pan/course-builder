@@ -66,6 +66,23 @@ export async function createCourse(data: {
   });
 }
 
+export async function updateCourseOutline(
+  courseId: string,
+  userId: string,
+  outline: ChapterOutlineItem[]
+) {
+  return prisma.course.update({
+    where: { id: courseId, userId },
+    data: { outline },
+  });
+}
+
+export async function deleteCourse(courseId: string, userId: string) {
+  return prisma.course.delete({
+    where: { id: courseId, userId },
+  });
+}
+
 export async function updateCourseStatus(
   courseId: string,
   userId: string,

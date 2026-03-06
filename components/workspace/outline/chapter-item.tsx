@@ -23,8 +23,8 @@ const statusConfig: Record<
   },
   GENERATING: {
     icon: Loader2,
-    className: "text-violet-500 cursor-wait",
-    dotClass: "bg-violet-500",
+    className: "text-muted-foreground cursor-wait",
+    dotClass: "bg-muted-foreground",
   },
   AVAILABLE: {
     icon: BookOpen,
@@ -60,7 +60,7 @@ export function ChapterItem({
       className={cn(
         "w-full flex items-start gap-3 p-3 rounded-lg border transition-colors text-left",
         isActive
-          ? "border-violet-500/50 bg-violet-500/10"
+          ? "border-border bg-accent"
           : "border-transparent",
         config.className
       )}

@@ -31,7 +31,7 @@ export function AnswerInput({
       <Button
         onClick={onSubmit}
         disabled={disabled || isSubmitting || value.trim().length < 10}
-        className="bg-violet-600 hover:bg-violet-700 text-white gap-2"
+        className="gap-2"
         size="sm"
       >
         {isSubmitting ? (

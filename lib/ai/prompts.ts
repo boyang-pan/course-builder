@@ -1,4 +1,5 @@
 import { CHAPTERS_PER_COURSE, CHAPTER_EXERCISES_DELIMITER, EXERCISES_PER_CHAPTER } from "@/lib/constants";
+import type { ChapterOutlineItem } from "@/types/course";
 
 export function outlinePrompt(topic: string): { system: string; user: string } {
   return {
@@ -60,6 +61,56 @@ Requirements:
 - Questions should require genuine understanding, not just recall
 - Rubrics should be detailed enough for consistent AI grading
 - Questions should build on each other in complexity`,
+  };
+}
+
+export function outlineChatPrompt(course: {
+  title: string;
+  description: string;
+  outline: ChapterOutlineItem[];
+}): { system: string } {
+  const chapterList = course.outline
+    .map((c) => `  ${c.order}. ${c.title} — ${c.summary}`)
+    .join("\n");
+  return {
+    system: `You are a helpful course design assistant for the course "${course.title}".
+Course description: ${course.description}
+Current outline:\n${chapterList}
+
+Answer questions about the course structure. When the user explicitly requests structural changes (add, remove, reorder, or rewrite chapters), include a proposed outline using this exact format at the END of your response after a conversational explanation:
+
+<outline_proposal>
+[{"order":1,"title":"...","summary":"..."},...]
+</outline_proposal>
+
+Rules: only include the tag on explicit modification requests; JSON must be a valid array with fields order (int), title (string), summary (string); orders must be consecutive starting at 1. Never include the tag for informational questions.`,
+  };
+}
+
+export function chapterChatPrompt(
+  courseTitle: string,
+  chapter: { title: string; summary: string; content: string }
+): { system: string } {
+  return {
+    system: `You are a patient tutor for the course "${courseTitle}", chapter "${chapter.title}".
+Summary: ${chapter.summary}
+Chapter content:\n${chapter.content.slice(0, 3000)}${chapter.content.length > 3000 ? "\n[...content truncated]" : ""}
+
+Help the learner understand this chapter: answer comprehension questions, provide analogies, explain concepts multiple ways. Do not reveal exercise answers or rubrics. Keep responses focused on this chapter.`,
+  };
+}
+
+export function exerciseChatPrompt(
+  courseTitle: string,
+  chapter: { title: string; content: string },
+  exercise: { question: string; order: number }
+): { system: string } {
+  return {
+    system: `You are a Socratic tutor for the course "${courseTitle}", chapter "${chapter.title}".
+Exercise ${exercise.order}: ${exercise.question}
+Relevant chapter material:\n${chapter.content.slice(0, 2000)}${chapter.content.length > 2000 ? "\n[...truncated]" : ""}
+
+Guide the learner toward the answer through hints and questions — NEVER state the answer directly. If asked "what is the answer?", respond with a hint instead. Reference specific concepts from the chapter. Affirm correct reasoning.`,
   };
 }
 
